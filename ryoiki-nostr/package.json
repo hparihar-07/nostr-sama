@@ -1,0 +1,27 @@
+{
+  "name": "nostr-cli",
+  "version": "1.0.0",
+  "description": "A basic hello world cli using nostr",
+  "keywords": [
+    "nostr",
+    "javascript"
+  ],
+  "license": "ISC",
+  "author": "0xhparihar07",
+  "type": "commonjs",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "dotenv": "^17.3.1",
+    "nostr-tools": "^2.23.3",
+    "ws": "^8.19.0"
+  },
+  "devDependencies": {
+    "@types/node": "^25.5.0",
+    "@types/ws": "^8.18.1",
+    "tsx": "^4.21.0",
+    "typescript": "^5.9.3"
+  }
+}
