@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Senrigan | Nostr Explorer</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <main class="container">
+        <header>
+            <h1>👁️ Project Senrigan</h1>
+            <p>Enter a Nostr Public Key (npub) to reveal their identity.</p>
+        </header>
+
+        <div class="search-box">
+            <input type="text" id="pubkey-input" placeholder="Enter key..." autocomplete="off">
+            <button id="search-btn">Search</button>
+        </div>
+
+        <div id="profile-card" class="card hidden"></div>
+    </main>
+    <script type="module" src="app.js"></script>
+</body>
+</html>
