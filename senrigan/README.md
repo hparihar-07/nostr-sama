@@ -2,6 +2,7 @@
 
 Project Senrigan is a lightweight, zero-dependency vanilla web application designed to query and visualize decentralized identity data from the Nostr network. 
 
+![Project-Muryo-live](./assets/senrigan.png)
 
 ## 📜 The Lore: What is "Senrigan"?
 
