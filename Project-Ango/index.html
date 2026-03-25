@@ -1,0 +1,189 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>🤫 Ango | Cryptographic Dead Drop</title>
+    <script>
+      console.warn = () => {};
+    </script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            boxShadow: {
+              cyber: "6px 6px 0px 0px #00ff41",
+              "cyber-sm": "3px 3px 0px 0px #00ff41",
+              "cyber-active": "0px 0px 0px 0px #00ff41",
+            },
+            colors: {
+              "matrix-green": "#00ff41",
+              "matrix-dark": "#001a00",
+              "terminal-black": "#0a0a0a",
+              "alert-red": "#ff003c",
+            },
+          },
+        },
+      };
+    </script>
+    <style>
+      body {
+        background-color: #050505;
+        font-family:
+          "Courier New", Courier, monospace;
+        color: #00ff41;
+      }
+      body::before {
+        content: " ";
+        display: block;
+        position: absolute;
+        top: 0;
+        left: 0;
+        bottom: 0;
+        right: 0;
+        background:
+          linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%),
+          linear-gradient(
+            90deg,
+            rgba(255, 0, 0, 0.06),
+            rgba(0, 255, 0, 0.02),
+            rgba(0, 0, 255, 0.06)
+          );
+        z-index: 2;
+        background-size:
+          100% 2px,
+          3px 100%;
+        pointer-events: none;
+      }
+      ::-webkit-scrollbar {
+        width: 10px;
+      }
+      ::-webkit-scrollbar-track {
+        background: #0a0a0a;
+        border-left: 2px solid #00ff41;
+      }
+      ::-webkit-scrollbar-thumb {
+        background: #00ff41;
+      }
+    </style>
+  </head>
+  <body
+    class="min-h-screen flex flex-col items-center justify-center p-4 sm:p-8 selection:bg-matrix-green selection:text-black"
+  >
+    <main
+      class="w-full max-w-3xl bg-terminal-black border-4 border-matrix-green p-6 sm:p-10 shadow-cyber relative flex flex-col gap-6 z-10"
+    >
+      <header
+        class="border-b-4 border-matrix-green pb-4 mb-2 flex flex-col sm:flex-row justify-between items-start sm:items-end gap-4"
+      >
+        <div>
+          <h1
+            class="text-4xl sm:text-5xl font-black tracking-widest uppercase mb-1 drop-shadow-[0_0_8px_rgba(0,255,65,0.8)]"
+          >
+            Project Ango
+          </h1>
+          <p
+            class="font-bold text-terminal-black bg-matrix-green inline-block px-2 py-1 text-xs uppercase tracking-widest"
+          >
+            P2P Encrypted Dead Drop
+          </p>
+        </div>
+
+        <div class="flex flex-col items-end gap-2 w-full sm:w-auto">
+          <button
+            id="connect-btn"
+            class="w-full sm:w-auto bg-terminal-black text-matrix-green border-2 border-matrix-green px-4 py-2 font-bold shadow-cyber-sm transition-all hover:bg-matrix-green hover:text-black active:translate-y-1 active:shadow-none uppercase tracking-widest text-sm"
+          >
+            Connect Wallet
+          </button>
+          <div
+            id="status-badge"
+            class="bg-matrix-dark text-matrix-green px-3 py-1 font-bold text-xs border border-matrix-green text-center w-full sm:w-auto uppercase tracking-widest"
+          >
+            [ OFFLINE ]
+          </div>
+        </div>
+      </header>
+
+      <div class="flex flex-col gap-2">
+        <label class="text-xs uppercase font-bold tracking-widest"
+          >Target Public Key (Recipient npub)</label
+        >
+        <input
+          type="text"
+          id="target-npub"
+          placeholder="npub1..."
+          autocomplete="off"
+          class="w-full bg-matrix-dark border-2 border-matrix-green px-4 py-3 font-bold text-sm sm:text-base outline-none focus:bg-matrix-green focus:text-black transition-colors placeholder-matrix-green/40 text-matrix-green"
+        />
+      </div>
+
+      <div class="relative w-full shadow-cyber-sm">
+        <div
+          class="absolute top-0 left-0 bg-matrix-green text-black border-b-2 border-r-2 border-matrix-green px-3 py-1 text-xs font-bold uppercase z-10"
+        >
+          Classified Payload
+        </div>
+        <textarea
+          id="message-editor"
+          spellcheck="false"
+          placeholder="> Enter strictly confidential text..."
+          class="w-full h-48 bg-terminal-black text-matrix-green border-2 border-matrix-green p-4 pt-10 font-mono text-sm outline-none focus:ring-2 focus:ring-matrix-green transition-all resize-y leading-relaxed placeholder-matrix-green/30"
+        ></textarea>
+      </div>
+
+      <button
+        id="transmit-btn"
+        class="w-full bg-matrix-green text-black border-2 border-matrix-green px-6 py-4 font-black text-xl shadow-cyber transition-all hover:bg-terminal-black hover:text-matrix-green active:translate-x-[6px] active:translate-y-[6px] active:shadow-cyber-active tracking-widest uppercase"
+      >
+        Encrypt & Transmit
+      </button>
+
+      <div
+        id="result-panel"
+        class="hidden flex-col gap-4 mt-2 p-4 bg-matrix-dark border-2 border-matrix-green shadow-cyber-sm animate-pop"
+      >
+        <div class="flex items-center gap-3">
+          <span
+            class="bg-matrix-green text-black w-6 h-6 flex items-center justify-center font-black text-lg"
+            >!</span
+          >
+          <h3
+            class="text-lg font-black uppercase tracking-widest text-matrix-green"
+          >
+            Payload Encrypted & Broadcasted
+          </h3>
+        </div>
+
+        <div class="flex flex-col gap-1">
+          <span class="text-[10px] font-bold uppercase text-matrix-green/70"
+            >Raw Ciphertext (Intercept View):</span
+          >
+          <div
+            id="cipher-output"
+            class="bg-terminal-black border border-matrix-green/50 p-3 font-mono text-xs text-matrix-green/60 break-all h-24 overflow-y-auto selection:bg-matrix-green selection:text-black"
+          ></div>
+        </div>
+      </div>
+    </main>
+
+    <style>
+      @keyframes popIn {
+        0% {
+          opacity: 0;
+          transform: scale(0.98) translateY(10px);
+        }
+        100% {
+          opacity: 1;
+          transform: scale(1) translateY(0);
+        }
+      }
+      .animate-pop {
+        animation: popIn 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+      }
+    </style>
+
+    <script type="module" src="app.js"></script>
+  </body>
+</html>
