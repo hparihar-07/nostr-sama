@@ -1,0 +1,168 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>⚡ Resonance | NIP-28 Global Chat</title>
+    <script>
+      console.warn = () => {};
+    </script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            boxShadow: {
+              brutal: "6px 6px 0px 0px rgba(0,0,0,1)",
+              "brutal-sm": "3px 3px 0px 0px rgba(0,0,0,1)",
+              "brutal-active": "0px 0px 0px 0px rgba(0,0,0,1)",
+            },
+            colors: {
+              "neo-purple": "#9d4edd",
+              "neo-orange": "#ff6d00",
+              "neo-red": "#ff0a54",
+              "neo-bg": "#e2e8f0",
+            },
+          },
+        },
+      };
+    </script>
+    <style>
+      body {
+        background-color: #e2e8f0;
+        background-image:
+          repeating-linear-gradient(
+            45deg,
+            #cbd5e1 25%,
+            transparent 25%,
+            transparent 75%,
+            #cbd5e1 75%,
+            #cbd5e1
+          ),
+          repeating-linear-gradient(
+            45deg,
+            #cbd5e1 25%,
+            #e2e8f0 25%,
+            #e2e8f0 75%,
+            #cbd5e1 75%,
+            #cbd5e1
+          );
+        background-position:
+          0 0,
+          10px 10px;
+        background-size: 20px 20px;
+        font-family: "Segoe UI", system-ui, sans-serif;
+      }
+
+      /* Apply custom scrollbar ONLY to the chat feed so it doesn't break mobile edges */
+      #chat-feed::-webkit-scrollbar {
+        width: 8px;
+      }
+      #chat-feed::-webkit-scrollbar-track {
+        background: transparent;
+        border-left: 2px solid black;
+      }
+      #chat-feed::-webkit-scrollbar-thumb {
+        background: black;
+      }
+    </style>
+  </head>
+  <body
+    class="h-[100dvh] w-full flex flex-col p-2 sm:p-4 font-mono text-black selection:bg-neo-orange selection:text-white overflow-hidden"
+  >
+    <main
+      class="w-full max-w-7xl mx-auto flex flex-col md:flex-row gap-3 sm:gap-4 h-full overflow-hidden"
+    >
+      <aside class="w-full md:w-1/3 lg:w-1/4 flex flex-col gap-3 shrink-0">
+        <div
+          class="bg-neo-purple border-4 border-black p-4 sm:p-5 shadow-brutal relative z-10"
+        >
+          <h1
+            class="text-2xl sm:text-3xl font-black uppercase tracking-tighter text-white drop-shadow-[2px_2px_0px_rgba(0,0,0,1)]"
+          >
+            Resonance
+          </h1>
+          <p
+            class="font-bold text-black bg-neo-orange inline-block px-2 py-1 border-2 border-black mt-1 text-[10px] uppercase shadow-brutal-sm tracking-widest"
+          >
+            NIP-28 Public Chat
+          </p>
+        </div>
+
+        <div
+          class="bg-white border-4 border-black p-4 sm:p-5 shadow-brutal flex flex-col gap-3"
+        >
+          <button
+            id="connect-btn"
+            class="w-full bg-black text-white border-4 border-black px-4 py-3 font-black uppercase tracking-widest shadow-brutal-sm transition-all hover:bg-neo-purple active:translate-x-[4px] active:translate-y-[4px] active:shadow-brutal-active text-sm sm:text-base"
+          >
+            Connect Wallet
+          </button>
+          <div
+            id="status-badge"
+            class="bg-neo-bg text-black px-3 py-2 font-bold text-[10px] border-2 border-black text-center uppercase tracking-widest"
+          >
+            Status: Disconnected
+          </div>
+        </div>
+      </aside>
+
+      <section
+        class="w-full md:w-2/3 lg:w-3/4 bg-white border-4 border-black shadow-brutal flex flex-col flex-1 overflow-hidden relative"
+      >
+        <div
+          class="bg-black text-white border-b-4 border-black p-3 sm:p-4 flex justify-between items-center shrink-0"
+        >
+          <h2 class="font-black uppercase tracking-widest text-base sm:text-lg">
+            Live Firehose
+          </h2>
+          <div class="flex items-center gap-2">
+            <button
+              id="refresh-btn"
+              class="text-[10px] bg-white text-black px-2 py-1 font-bold uppercase border-2 border-black shadow-brutal-sm hover:bg-neo-orange active:translate-y-1"
+            >
+              ↻ Reconnect
+            </button>
+            <span
+              id="event-counter"
+              class="bg-neo-orange text-black px-2 py-1 font-black text-xs border-2 border-white shadow-brutal-sm"
+              >0 Packets</span
+            >
+          </div>
+        </div>
+
+        <div
+          id="chat-feed"
+          class="flex-1 overflow-y-auto p-3 sm:p-6 flex flex-col gap-4 bg-neo-bg"
+        >
+          <div
+            class="self-center bg-black text-neo-purple px-4 py-2 border-2 border-black text-xs font-bold uppercase shadow-brutal-sm text-center"
+          >
+            Establishing WebSocket Uplink...
+          </div>
+        </div>
+
+        <div class="p-3 sm:p-4 bg-white border-t-4 border-black shrink-0">
+          <div class="flex flex-row gap-2 sm:gap-3">
+            <textarea
+              id="message-input"
+              rows="1"
+              placeholder="> Broadcast globally..."
+              class="flex-1 bg-neo-bg border-4 border-black px-3 py-3 font-bold outline-none focus:bg-white transition-colors shadow-inner resize-none text-sm sm:text-base disabled:opacity-50"
+              disabled
+            ></textarea>
+            <button
+              id="send-btn"
+              class="bg-neo-orange text-black border-4 border-black px-4 sm:px-6 py-3 font-black uppercase tracking-widest shadow-brutal-sm transition-all hover:bg-neo-purple hover:text-white active:translate-x-[4px] active:translate-y-[4px] active:shadow-brutal-active disabled:opacity-50 disabled:cursor-not-allowed text-sm sm:text-base"
+              disabled
+            >
+              Send
+            </button>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <script type="module" src="app.js"></script>
+  </body>
+</html>
